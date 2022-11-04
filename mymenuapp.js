@@ -5,16 +5,12 @@
 Your menu should have the options to create, view, and delete elements.
 */
 
-class Record {
+class RecordClass {
   constructor(artist, title, format) {
     this.artist = artist;
     this.title = title;
     this.format = format;
   }
-  describe() {
-    return `${this. artist} - ${this.title} (${this.format})`;
-  }
-
 }
 
 class RecordCollection {
@@ -23,29 +19,17 @@ class RecordCollection {
     this.records = [];
   }
 
-  // do I need/use the below methods elsewhere?
-  addRelease(record) {
-    if (record instanceof Record) {
-      this.records.push();
-    } else {
-      throw new Error(
-        `You can only add a record. Argument is not a record: ${release}`);
-    }
-  }
-
-  describe() {
-    return `${this.owner} has ${this.records.length} records in their collection.`;
-  }
+  // Removed methods from examples since they are not used
 }
 
 class Menu {
+  element;
   constructor() {
     this.collections = [];
     this.selectedCollection = null;
   }
 
   start() {
-   
     let selection = this.showMainMenuOptions();
 
     while (selection != 0) {
@@ -73,7 +57,7 @@ class Menu {
   }
 
   showMainMenuOptions() {
-    //"cancel" button doesn't do anything in this menu
+    //"cancel" button doesn't do anything in this menu. Exiting with 0 works.
     return prompt(`
         0) exit
         1) create new record collection
@@ -84,7 +68,6 @@ class Menu {
   }
 
   showCollectionMenuOptions(collectionInfo) {
-    
     return prompt(`
         0) back
         1) add record
@@ -99,7 +82,6 @@ class Menu {
     let collectString = "";
     for (let i = 0; i < this.collections.length; i++) {
       collectString += i + ") " + this.collections[i].owner + "\n";
-   
     }
     alert(collectString);
   }
@@ -109,16 +91,16 @@ class Menu {
     this.collections.push(new RecordCollection(owner));
   }
 
-  //added list of collections with indexes to view collection prompt. First entry is indented???
+  //added list of collections with indexes to view collection prompt, so I don't have to remember which index is which.
   viewCollection() {
-     let collectString = "";
-     for (let i = 0; i < this.collections.length; i++) {
-       collectString += i + ") " + this.collections[i].owner + "\n";
-     }
- 
+    let collectString = "";
+    for (let i = 0; i < this.collections.length; i++) {
+      collectString += i + ") " + this.collections[i].owner + "\n";
+    }
+
     let index = prompt(`Enter the index of the collection you wish to view: 
     ${collectString}`);
-   
+
     if (index > -1 && index < this.collections.length) {
       this.selectedCollection = this.collections[index];
       let description =
@@ -136,70 +118,70 @@ class Menu {
       }
       let selection = this.showCollectionMenuOptions(description);
 
-      // after creating a record, the collection page doesn't display the record and you can't add another record. You can do both if you exit to main menu and return
+      // after creating a record, the collection page doesn't display the record. You can see it if you exit to main menu and return
+      //Working on a "refresh" method to update this automatically.
 
-      while (selection != 0){
-      switch (selection) {
-        case "1":
-          this.createRecord();
-          break;
-        case "2":
-          this.deleteRecord();
-          break;
-        //added this option to play a record:
-        case "3":
-          this.playRecord();
+      while (selection != 0) {
+        switch (selection) {
+          case "1":
+            this.createRecord();
+            break;
+          case "2":
+            this.deleteRecord();
+            break;
+          //added this option to play a record:
+          case "3":
+            this.playRecord();
+        }
+        //changed this so it would return to the collection menu instead of the main menu after an action is taken.
+        selection = this.showCollectionMenuOptions(description);
       }
-      //changed this so it would return to the collection menu instead of the main menu after an action is taken. 
-      selection = this.showCollectionMenuOptions(description);
     }
-    }
-
   }
 
   deleteCollection() {
-    /* if you choose delete and hit cancel without entering anything, it still deletes the element at index 0. It also made the last element
-    in the array return as null.*/
+   
+   //added condition of != null because it was deleting collection 0 when no index was entered. When hitting "cancel", value returns as null. Same issue occurred with deleteRecord.
     let index = prompt("Enter the index of the collection you wish to delete");
-    if (index > -1 && index < this.collections.length) {
+    if (index > -1 && index < this.collections.length && index != null) {
       this.collections.splice(index, 1);
     }
   }
 
   createRecord() {
-        let artist = prompt("Enter artist for the new record:");
+    let artist = prompt("Enter artist for the new record:");
     let title = prompt("Enter title of new record:");
 
     //added new attribute: format
-    let format = prompt("Enter format of new record:")
-    this.selectedCollection.records.push(new Record(artist, title, format));
-
-      }
+    let format = prompt("Enter format of new record:");
+    this.selectedCollection.records.push(
+      new RecordClass(artist, title, format)
+    );
+  }
 
   deleteRecord() {
     let index = prompt("Enter the index of the record you wish to delete:");
-    if (index > -1 && index < this.selectedCollection.records.length) {
+
+    if (
+      index > -1 &&
+      index < this.selectedCollection.records.length &&
+      index != null
+    ) {
       this.selectedCollection.records.splice(index, 1);
     }
   }
 
-  playRecord(){
+  playRecord() {
     let index = prompt("Enter the index of the record you wish to play");
-    if(index > -1 && index <this.selectedCollection.records.length){  
+    if (index > -1 && index < this.selectedCollection.records.length) {
       this.selectedRecord = this.selectedCollection.records[index];
-        
-
     }
     let description = `Now playing: ${this.selectedRecord.title} by ${this.selectedRecord.artist}`;
     alert(description);
 
-    //want to display a "now playing" description on the collection page and add "stop playing" menu option.
-    
-    
+    //working on displaying a "now playing" description on the collection page and add "stop playing" menu option.
   }
 }
-
-
 
 let menu = new Menu();
 menu.start();
