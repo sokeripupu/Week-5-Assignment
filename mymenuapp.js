@@ -158,6 +158,8 @@ class Menu {
   }
 
   deleteCollection() {
+    /* if you choose delete and hit cancel without entering anything, it still deletes the element at index 0. It also made the last element
+    in the array return as null.*/
     let index = prompt("Enter the index of the collection you wish to delete");
     if (index > -1 && index < this.collections.length) {
       this.collections.splice(index, 1);
